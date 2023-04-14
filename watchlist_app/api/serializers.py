@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from watchlist_app.models import WatchList, StreamPlatform
+from watchlist_app.models import WatchList, StreamPlatform, Review
 
 """ 
 Validation is called when serializer.is_valid() is called. We have three types of validation
@@ -8,8 +8,16 @@ Validation is called when serializer.is_valid() is called. We have three types o
 3. validators
 """
 
+class ReviewSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Review
+        fields ="__all__"
+
+
 class WatchListSerializer(serializers.ModelSerializer):
     len_name = serializers.SerializerMethodField()
+    reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = WatchList
