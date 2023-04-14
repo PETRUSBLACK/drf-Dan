@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from watchlist_app.models import Movie
+from watchlist_app.models import WatchList, StreamPlatform
 
 """ 
 Validation is called when serializer.is_valid() is called. We have three types of validation
@@ -8,29 +8,25 @@ Validation is called when serializer.is_valid() is called. We have three types o
 3. validators
 """
 
-class MovieSerializer(serializers.ModelSerializer):
+class WatchListSerializer(serializers.ModelSerializer):
+    len_name = serializers.SerializerMethodField()
 
     class Meta:
-        model = Movie
+        model = WatchList
         fields = "__all__"
 
-    def validate_name(self, value):
-        """
-        This is a field validation. it starts with the KEYWORD validate_<Field_name>
-        """
-        if len(value) < 2:
-            raise serializers.ValidationError("Name is too short")
-        else:
-            return value
+    def get_len_name(self, object):
+        length = len(object.title)
+        return length 
 
-    def validate(self, data):
-        """
-        This ia an object validation. it starts with the KEYWORD validate
-        """
-        if data["name"] == data["description"]:
-            raise serializers.ValidationError("The name and description should be different")
-        else:
-            return data 
+
+class StreamPlatformSerializer(serializers.ModelSerializer):
+    watchlist = WatchListSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = StreamPlatform
+        fields = "__all__"
+
 
 
 
