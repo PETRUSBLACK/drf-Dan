@@ -9,6 +9,7 @@ Validation is called when serializer.is_valid() is called. We have three types o
 """
 
 class ReviewSerializer(serializers.ModelSerializer):
+    review_user = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Review
