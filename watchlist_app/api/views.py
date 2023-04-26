@@ -8,6 +8,7 @@ from rest_framework import viewsets
 from watchlist_app.models import WatchList, StreamPlatform, Review
 from . serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticated
+from .permissions import AdminOrReadOnly, ReviewUserOrReadOnly
 
 # This is the model-viewset view
 class StreamPlatformVS(viewsets.ModelViewSet):
@@ -68,7 +69,7 @@ class ReviewCreate(generics.CreateAPIView):
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer  
-    permission_classes = [IsAuthenticated]  
+    permission_classes = [ReviewUserOrReadOnly]  
 
 
 
