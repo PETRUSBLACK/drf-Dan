@@ -8,12 +8,13 @@ from rest_framework import viewsets
 from watchlist_app.models import WatchList, StreamPlatform, Review
 from . serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticated
-from .permissions import AdminOrReadOnly, ReviewUserOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 
 # This is the model-viewset view
 class StreamPlatformVS(viewsets.ModelViewSet):
     queryset = StreamPlatform.objects.all()
     serializer_class = StreamPlatformSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
 # This is the viewset view
 # class StreamPlatformVS(viewsets.ViewSet):
@@ -50,6 +51,7 @@ class ReviewList(generics.ListAPIView):
 
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Review.objects.all()
@@ -80,7 +82,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer  
     # permission_classes = [IsAuthenticated]    
-    permission_classes = [ReviewUserOrReadOnly]
+    permission_classes = [IsReviewUserOrReadOnly]
 
 
 
@@ -117,6 +119,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class StreamPlatformAV(APIView):
+    permission_classes = [IsAdminOrReadOnly]
     
     def get(self, request):
         platform = StreamPlatform.objects.all()
@@ -133,6 +136,8 @@ class StreamPlatformAV(APIView):
 
 
 class StreamPlatformDetailAV(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
 
     def get(self, request, pk):
         try:
@@ -158,6 +163,8 @@ class StreamPlatformDetailAV(APIView):
 
 
 class WatchListAV(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
 
     def get(self, request):
         movies = WatchList.objects.all()
@@ -174,6 +181,7 @@ class WatchListAV(APIView):
 
 
 class WatchDetailAV(APIView):
+    permission_classes = [IsAdminOrReadOnly]
 
     def get(self, request, pk):
         try:
