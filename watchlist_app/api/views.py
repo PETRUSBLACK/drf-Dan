@@ -10,6 +10,8 @@ from . serializers import WatchListSerializer, StreamPlatformSerializer, ReviewS
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from .permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
+from .throttling import ReviewCreateThrottle, ReviewListThrottle
+
 
 # This is the model-viewset view
 class StreamPlatformVS(viewsets.ModelViewSet):
@@ -44,7 +46,7 @@ class ReviewList(generics.ListAPIView):
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer 
     permission_classes = [IsAuthenticated]  
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_classes = [ReviewCreateThrottle, AnonRateThrottle]
 
 
     def get_queryset(self):
@@ -55,6 +57,7 @@ class ReviewList(generics.ListAPIView):
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ReviewCreateThrottle]
 
     def get_queryset(self):
         return Review.objects.all()
