@@ -8,6 +8,7 @@ from rest_framework import viewsets
 from watchlist_app.models import WatchList, StreamPlatform, Review
 from . serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from .permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 
 # This is the model-viewset view
@@ -43,6 +44,8 @@ class ReviewList(generics.ListAPIView):
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer 
     permission_classes = [IsAuthenticated]  
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -83,6 +86,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer  
     # permission_classes = [IsAuthenticated]    
     permission_classes = [IsReviewUserOrReadOnly]
+    throttle_classes = [UserRateThrottle, AnonRateThrottle]
 
 
 
