@@ -8,7 +8,7 @@ from rest_framework import viewsets
 from watchlist_app.models import WatchList, StreamPlatform, Review
 from . serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
 from .permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 from .throttling import ReviewCreateThrottle, ReviewListThrottle
 
@@ -89,7 +89,8 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer  
     # permission_classes = [IsAuthenticated]    
     permission_classes = [IsReviewUserOrReadOnly]
-    throttle_classes = [UserRateThrottle, AnonRateThrottle]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'review-detail'
 
 
 
