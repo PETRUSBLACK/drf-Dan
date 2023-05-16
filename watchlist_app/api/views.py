@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
 from .permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 from .throttling import ReviewCreateThrottle, ReviewListThrottle
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 
 # This is the model-viewset view
@@ -18,6 +20,22 @@ class StreamPlatformVS(viewsets.ModelViewSet):
     queryset = StreamPlatform.objects.all()
     serializer_class = StreamPlatformSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+class UserReview(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+
+    # def get_queryset(self):
+    #     username = self.kwargs['username']    
+    #     return Review.objects.filter(review_user__username=username) 
+
+        # OR
+
+    def get_queryset(self):
+        username = self.request.query_params.get('username', None)    
+        return Review.objects.filter(review_user__username=username) 
+
+
+
 
 # This is the viewset view
 # class StreamPlatformVS(viewsets.ViewSet):
@@ -47,6 +65,8 @@ class ReviewList(generics.ListAPIView):
     serializer_class = ReviewSerializer 
     permission_classes = [IsAuthenticated]  
     throttle_classes = [ReviewCreateThrottle, AnonRateThrottle]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['review_user__username', 'active'] #implementing the filter-field
 
 
     def get_queryset(self):
@@ -168,6 +188,19 @@ class StreamPlatformDetailAV(APIView):
         platform = StreamPlatform.objects.get(pk=pk)
         platform.delete()
         return Response(status=status.HTTP_204_NO_CONTENT )
+
+class WatchListGV(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'platform__name'] # implementing the search-field
+
+
+class WatchListGV(generics.ListAPIView):
+    queryset = WatchList.objects.all()
+    serializer_class = WatchListSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['avg_rating'] # implementing the ordering-field
 
 
 class WatchListAV(APIView):

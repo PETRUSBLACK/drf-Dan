@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'user_app', 
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'django_filter',
 
 ]
 
@@ -149,7 +151,10 @@ REST_FRAMEWORK = {
             'review-create': '1/day',
             'review-list': '10/day',
             'review-detail': '2/day', 
-         }
+         },
+         'DEFAULT_FILTER_BACKENDS': [
+            'django_filters.rest_framework.DjangoFilterBackend'
+         ],
 }
 
 SIMPLE_JWT = {
